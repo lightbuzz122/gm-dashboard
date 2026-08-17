@@ -18,8 +18,7 @@ function ProtectedRoute({ children }) {
       </div>
     );
   }
-  // TEMPORARY: login requirement disabled for a demo — see comment below.
-  // if (!session) return <Navigate to="/login" replace />;
+  if (!session) return <Navigate to="/login" replace />;
   return children;
 }
 
