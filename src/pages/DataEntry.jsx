@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Save, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Save } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import Layout, { Card } from "../components/Layout";
 
 function startOfWeek(d) {
   const date = new Date(d);
@@ -99,11 +99,7 @@ export default function DataEntry() {
   }, {});
 
   return (
-    <div className="min-h-screen w-full bg-[#0a0e17] text-slate-200 px-6 py-6 max-w-3xl mx-auto">
-      <Link to="/" className="flex items-center gap-2 text-slate-500 hover:text-slate-300 text-sm mb-6">
-        <ArrowLeft size={16} /> Back to dashboard
-      </Link>
-
+    <Layout>
       <h1 className="text-xl font-semibold text-white mb-1">Weekly data entry</h1>
       <p className="text-slate-500 text-sm mb-6">
         Enter this week's actuals — same fields you'd normally type into the spreadsheet.
@@ -161,6 +157,6 @@ export default function DataEntry() {
           </button>
         </form>
       )}
-    </div>
+    </Layout>
   );
 }

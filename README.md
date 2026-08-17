@@ -1,83 +1,45 @@
-# GM Dashboard — Phase 1
+# GM Dashboard — Phase 1c: Full metrics, Monthly/Yearly, Forecasting
 
-A real, working version of the Alwyne Castle GM dashboard: login, a weekly
-data-entry form, and a dashboard driven entirely by a generic KPI engine
-(add new metrics in Supabase — no code changes needed).
+Adds most of the raw-input metrics from the full spec, plus:
 
-## What this is
+- **Weekly / Month-to-Date / Year-to-Date toggle** on every category page
+  (Sales & Profit, Labour, Guest Experience, Stock & Waste, People). Flow
+  metrics (£, hours) sum across the period; rate metrics (%, scores)
+  average instead — summing a percentage across weeks would be meaningless.
+- **Simple trend forecast** ("Next week trend") on each metric, based on a
+  straight-line trend through recent actuals. This is a directional
+  heads-up, not a real forecasting model — good enough to flag "labour's
+  been creeping up for 4 weeks" but not to bet the business on.
 
-- **Auth**: email + password sign-up/sign-in via Supabase
-- **Data model**: a `kpis` table (definitions: target, thresholds, direction)
-  and a `kpi_entries` table (the actual numbers you enter each week) — see
-  `supabase/schema.sql`
-- **Data entry**: `/entry` — a form generated automatically from whatever
-  KPIs exist in the database
-- **Dashboard**: `/` — reads real data, computes red/amber/green status and
-  variance itself using the KPI engine in `src/lib/kpiEngine.js`
+## Setup — run these two things in order
 
-Sections marked **"demo data"** on the dashboard (alerts, accountability
-checklist, next meeting) aren't wired to real tables yet — that's Phase 2.
-Everything else on the dashboard is live.
+1. **Run `supabase/phase1c-aggregation.sql`** in Supabase's SQL Editor
+   (adds the column that controls sum vs average — takes a few seconds).
+2. **Import `new-kpis-import.csv`** — in Supabase: Table Editor → `kpis`
+   table → the Insert/Import button near the top → Import data from CSV →
+   select the file. This adds ~20 new metrics pulled from the full spec
+   (sales discounts/promotions, COGS, forecasts, labour hours by type,
+   FOH/BOH labour cost, social posts, preorders, upsells, stock variance,
+   waste, training completion). No manual typing needed.
 
-## Setup — do this once
+After both, go to Admin → Metrics to see everything, tick off anything
+you don't want tracked yet, and go to Add Weekly Data — the new fields
+appear there automatically.
 
-### 1. Create a Supabase project
-Go to [supabase.com](https://supabase.com) → New project. Free tier is fine.
+## What's deliberately NOT in the CSV
 
-### 2. Run the schema
-In your Supabase project: **SQL Editor → New query**, paste the entire
-contents of `supabase/schema.sql`, and click **Run**. This creates all
-tables, security policies, and seeds one site ("Alwyne Castle") plus a
-starter set of KPIs.
+Anything that's really a *record*, not a single weekly number — OOS
+events, action tickets, maintenance jobs, individual employee training
+records, management meeting minutes. Those need their own tables and
+their own screens, same as Tasks and Compliance already got. Worth doing
+next once the weekly numbers are bedded in.
 
-### 3. Get your API keys
-In Supabase: **Project Settings → API**. Copy the **Project URL** and the
-**anon public** key.
+## Simplification worth knowing about
 
-### 4. Set environment variables
-
-Locally, copy `.env.example` to `.env` and fill in the two values:
-
-```
-VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
-```
-
-On Vercel: **Project Settings → Environment Variables**, add the same two
-keys there, then redeploy.
-
-### 5. Run it
-
-```bash
-npm install
-npm run dev
-```
-
-Sign up with any email/password on the login screen — you're automatically
-attached to the seeded site. Go to **Add weekly data**, enter some numbers,
-save, and the dashboard populates with real figures, live variance, and
-correct red/amber/green status.
-
-## Adding or changing a KPI
-
-No code change needed. In Supabase, insert a row into `kpis`:
-
-```sql
-insert into kpis (key, name, category, unit, direction, target, warning_pct, critical_pct, sort_order)
-values ('food_cost_pct', 'Food Cost %', 'Stock', 'percent', 'lower_better', 28, 3, 8, 12);
-```
-
-It appears in the data-entry form automatically. To show it on the main
-dashboard cards too, add its key to `TOP_ROW` or `SECOND_ROW` in
-`src/pages/Dashboard.jsx`.
-
-## Stack
-
-React + Vite + Tailwind CSS v4 + Supabase (Postgres, Auth, Row Level Security)
-
-## What's next (Phase 2+)
-
-- Wire alerts, tasks, and management-meeting sections to real tables
-- CSV upload as an alternative to manual entry
-- Multi-site + director rollup view (the schema already has `sites` and
-  `organisations` ready for this)
+The spec distinguishes Budget vs Contract vs Forecast vs Actual as four
+separate tracked figures. For now, "Target" in the `kpis` table plays the
+role of Budget/Contract combined, and Forecast is entered as its own
+metric (`sales_forecast_wet`/`sales_forecast_dry`) so Forecast Accuracy
+can eventually be calculated as Actual ÷ Forecast. If you need Budget and
+Contract tracked as genuinely separate numbers later, that's a small
+schema addition, not a rebuild.

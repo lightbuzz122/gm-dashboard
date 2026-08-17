@@ -12,4 +12,9 @@ if (!url || !anonKey) {
   );
 }
 
-export const supabase = createClient(url, anonKey);
+export const supabase = createClient(url, anonKey, {
+  auth: {
+    // Don't remember the session between visits — always require login.
+    persistSession: false,
+  },
+});
