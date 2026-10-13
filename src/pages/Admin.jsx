@@ -4,6 +4,8 @@ import Layout, { Card } from "../components/Layout";
 import { supabase } from "../lib/supabaseClient";
 import { useSiteId } from "./Dashboard";
 import { formatValue } from "../lib/kpiEngine";
+import { DEMO } from "../config";
+import { DEMO_DEFS } from "../lib/demoData";
 
 const TABS = ["Metrics", "Edit Entries", "Activity Log"];
 
@@ -42,6 +44,7 @@ function MetricsTab() {
   const [savingKey, setSavingKey] = useState(null);
 
   useEffect(() => {
+    if (DEMO) { setKpis(DEMO_DEFS); setLoading(false); return; }
     supabase.from("kpis").select("*").order("category").order("sort_order")
       .then(({ data }) => {
         setKpis(data || []);
@@ -50,6 +53,7 @@ function MetricsTab() {
   }, []);
 
   async function toggle(kpi) {
+    if (DEMO) { kpi.active = !kpi.active; setKpis([...DEMO_DEFS]); return; }
     setSavingKey(kpi.key);
     const { error } = await supabase.from("kpis").update({ active: !kpi.active }).eq("id", kpi.id);
     if (!error) {
@@ -68,7 +72,7 @@ function MetricsTab() {
   return (
     <div className="space-y-5">
       <p className="text-slate-600 text-sm">
-        Only ticked metrics show up on the dashboard and on the weekly data-entry form.
+        Switch a metric Off to stop asking for it on the weekly data form and showing it on the dashboard. Nothing is deleted: switch it back On any time and its history is still there.
       </p>
       {Object.entries(grouped).map(([category, items]) => (
         <Card key={category} className="p-5">
@@ -82,6 +86,8 @@ function MetricsTab() {
                     Target {formatValue(k.target, k.unit)} · {k.direction === "higher_better" ? "higher is better" : "lower is better"}
                   </div>
                 </div>
+                <div className="flex items-center gap-3">
+                <span className={`text-[12px] font-medium w-6 text-right ${k.active ? "text-indigo-700" : "text-slate-500"}`}>{k.active ? "On" : "Off"}</span>
                 <button
                   onClick={() => toggle(k)}
                   disabled={savingKey === k.key}
@@ -90,6 +96,7 @@ function MetricsTab() {
                   <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${k.active ? "left-5.5" : "left-0.5"}`}
                     style={{ left: k.active ? "22px" : "2px" }} />
                 </button>
+                </div>
               </div>
             ))}
           </div>
@@ -102,6 +109,7 @@ function MetricsTab() {
 /* ---------- Edit Entries: fix a mistyped number ---------- */
 
 function EditEntriesTab({ siteId }) {
+  if (DEMO) return <Card className="p-10 text-center text-slate-600">Not available in the preview.</Card>;
   const [entries, setEntries] = useState([]);
   const [kpiNames, setKpiNames] = useState({});
   const [editing, setEditing] = useState(null); // entry id being edited
@@ -181,6 +189,7 @@ function EditEntriesTab({ siteId }) {
 /* ---------- Activity Log: who changed what ---------- */
 
 function ActivityLogTab({ siteId }) {
+  if (DEMO) return <Card className="p-10 text-center text-slate-600">Not available in the preview.</Card>;
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
