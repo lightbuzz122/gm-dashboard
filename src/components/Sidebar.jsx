@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   Home, PoundSterling, Users, GraduationCap, Heart, Layers,
   ShieldCheck, Package, ListChecks, Wrench, FileBarChart, Sparkles,
-  LogOut, ShieldAlert, Menu, X,
+  LogOut, ShieldAlert, Menu, X, Beer,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { SITE } from "../config";
@@ -14,7 +14,7 @@ export const NAV = [
   { icon: Users, label: "Labour", path: "/category/Labour" },
   { icon: GraduationCap, label: "People & Training", path: "/category/People" },
   { icon: Heart, label: "Guest Experience", path: "/category/Guest" },
-  { icon: Layers, label: "Operations", path: "/compliance" },
+  { icon: Layers, label: "Operations", path: "/operations" },
   { icon: ShieldCheck, label: "Compliance & Safety", path: "/compliance" },
   { icon: Package, label: "Stock & Waste", path: "/category/Stock" },
   { icon: ListChecks, label: "Tasks & Actions", path: "/tasks" },
@@ -27,7 +27,7 @@ function Brand() {
   return (
     <div className="flex items-center gap-2">
       <div className="w-9 h-9 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
-        {SITE.name.replace(/^the\s+/i, "").charAt(0)}
+        <Beer size={18} />
       </div>
       <div>
         <div className="font-semibold text-[14px] leading-tight text-white">{SITE.name}</div>
@@ -45,7 +45,7 @@ function NavList({ onNavigate }) {
   return (
     <>
       {NAV.map(({ icon: Icon, label, path }) => (
-        <Link key={label} to={path} onClick={onNavigate} className={item(location.pathname === path)}>
+        <Link key={label} to={path} onClick={onNavigate} className={item(location.pathname === path || (path !== "/" && location.pathname.startsWith(path + "/")))}>
           <Icon size={17} />
           <span>{label}</span>
         </Link>
