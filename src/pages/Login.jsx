@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Beer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { SITE } from "../config";
@@ -37,7 +38,7 @@ export default function Login() {
     <div className="min-h-screen w-full bg-[#F3F5F9] text-slate-800 flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl p-8">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white mb-4">
-          {SITE.name.replace(/^the\s+/i, "").charAt(0)}
+          <Beer size={18} />
         </div>
         <h1 className="text-xl font-semibold text-slate-900 mb-1">
           {mode === "signin" ? "Sign in" : "Create your account"}
