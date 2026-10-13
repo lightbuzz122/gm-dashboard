@@ -100,33 +100,33 @@ export default function DataEntry() {
 
   return (
     <Layout>
-      <h1 className="text-xl font-semibold text-white mb-1">Weekly data entry</h1>
-      <p className="text-slate-500 text-sm mb-6">
+      <h1 className="text-xl font-semibold text-slate-900 mb-1">Weekly data entry</h1>
+      <p className="text-slate-600 text-sm mb-6">
         Enter this week's actuals — same fields you'd normally type into the spreadsheet.
       </p>
 
       <div className="mb-6">
-        <label className="text-xs text-slate-500">Week starting (Monday)</label>
+        <label className="text-xs text-slate-600">Week starting (Monday)</label>
         <input
           type="date"
           value={periodStart}
           onChange={(e) => setPeriodStart(e.target.value)}
-          className="block mt-1 bg-[#121826] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
+          className="block mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
         />
-        <p className="text-[11px] text-slate-600 mt-1">Week: {periodStart} → {periodEnd}</p>
+        <p className="text-[11px] text-slate-500 mt-1">Week: {periodStart} → {periodEnd}</p>
       </div>
 
       {loading ? (
-        <p className="text-slate-500 text-sm">Loading fields…</p>
+        <p className="text-slate-600 text-sm">Loading fields…</p>
       ) : (
         <form onSubmit={handleSave} className="space-y-6">
           {Object.entries(grouped).map(([category, items]) => (
-            <div key={category} className="bg-[#121826] border border-white/5 rounded-2xl p-5">
-              <h2 className="text-sm font-semibold text-white mb-3">{category}</h2>
-              <div className="grid grid-cols-2 gap-4">
+            <div key={category} className="bg-white border border-slate-200 rounded-2xl p-5">
+              <h2 className="text-sm font-semibold text-slate-900 mb-3">{category}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {items.map((k) => (
                   <div key={k.key}>
-                    <label className="text-xs text-slate-500">
+                    <label className="text-xs text-slate-600">
                       {k.name}
                       {k.unit === "currency" && " (£)"}
                       {k.unit === "percent" && " (%)"}
@@ -137,7 +137,7 @@ export default function DataEntry() {
                       value={values[k.key] ?? ""}
                       onChange={(e) => setValues((v) => ({ ...v, [k.key]: e.target.value }))}
                       placeholder={k.target != null ? `Target: ${k.target}` : ""}
-                      className="w-full mt-1 bg-[#0e1420] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                      className="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
                     />
                   </div>
                 ))}
@@ -145,7 +145,7 @@ export default function DataEntry() {
             </div>
           ))}
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-red-700 text-sm">{error}</p>}
 
           <button
             type="submit"
