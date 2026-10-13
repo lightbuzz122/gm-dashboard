@@ -21,33 +21,33 @@ export default function CategoryPage() {
 
   return (
     <Layout>
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-white">{category}</h1>
-          <p className="text-slate-500 mt-1">Every tracked metric in this category, live from your data.</p>
+          <h1 className="text-2xl font-semibold text-slate-900">{category}</h1>
+          <p className="text-slate-600 mt-1">Every tracked metric in this category, live from your data.</p>
         </div>
         <Link to="/entry" className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 transition text-white rounded-lg px-3 py-2">
           <Plus size={14} /> Add weekly data
         </Link>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {RANGES.map((r) => (
           <button key={r.key} onClick={() => setRange(r.key)}
-            className={`px-4 py-2 rounded-lg text-sm ${range === r.key ? "bg-indigo-600 text-white" : "bg-[#121826] text-slate-400 border border-white/10"}`}>
+            className={`px-4 py-2 rounded-lg text-sm ${range === r.key ? "bg-indigo-600 text-white" : "bg-white text-slate-600 border border-slate-300"}`}>
             {r.label}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <Card className="p-10 text-center text-slate-500">Loading…</Card>
+        <Card className="p-10 text-center text-slate-600">Loading…</Card>
       ) : items.length === 0 ? (
-        <Card className="p-10 text-center text-slate-500">
+        <Card className="p-10 text-center text-slate-600">
           No active metrics in this category yet. Add or enable some from the Admin tab.
         </Card>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {items.map((kpi) => {
             const allEntries = entriesByKpi[kpi.key] || [];
             const rangeEntries = filterByRange(allEntries, range);
@@ -65,18 +65,18 @@ export default function CategoryPage() {
 
             return (
               <Card key={kpi.key} className="p-4">
-                <div className="text-[11px] text-slate-500 mb-2">{kpi.name}</div>
+                <div className="text-[11px] text-slate-600 mb-2">{kpi.name}</div>
                 <div className="text-2xl font-semibold" style={{ color: STATUS_COLOR[status] }}>
                   {formatValue(actual, kpi.unit)}
                 </div>
                 <div className="flex gap-2 text-[11px] mt-1">
-                  <span className="text-slate-500">vs Target {formatValue(target, kpi.unit)}</span>
-                  <span className={good ? "text-emerald-400" : good === false ? "text-red-400" : "text-slate-500"}>
+                  <span className="text-slate-600">vs Target {formatValue(target, kpi.unit)}</span>
+                  <span className={good ? "text-emerald-700" : good === false ? "text-red-700" : "text-slate-600"}>
                     {formatDelta(actual, target, kpi.unit)}
                   </span>
                 </div>
                 {forecast != null && (
-                  <div className="flex items-center gap-1 text-[11px] text-indigo-400 mt-2 pt-2 border-t border-white/5">
+                  <div className="flex items-center gap-1 text-[11px] text-indigo-700 mt-2 pt-2 border-t border-slate-200">
                     <TrendingUp size={12} />
                     Next week trend: {formatValue(forecast, kpi.unit)}
                   </div>
