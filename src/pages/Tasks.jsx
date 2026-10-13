@@ -65,8 +65,8 @@ export default function Tasks() {
     <Layout>
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Tasks & Actions</h1>
-          <p className="text-slate-500 mt-1">Handover notes and assigned tasks — click the status icon to move a task along.</p>
+          <h1 className="text-2xl font-semibold text-slate-900">Tasks & Actions</h1>
+          <p className="text-slate-600 mt-1">Handover notes and assigned tasks — click the status icon to move a task along.</p>
         </div>
         <button onClick={() => setShowForm((s) => !s)}
           className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 transition text-white rounded-lg px-3 py-2">
@@ -78,11 +78,11 @@ export default function Tasks() {
         <Card className="p-5">
           <form onSubmit={createTask} className="space-y-3">
             <div className="flex gap-3">
-              <label className="flex items-center gap-2 text-sm text-slate-300">
+              <label className="flex items-center gap-2 text-sm text-slate-700">
                 <input type="radio" checked={form.type === "task"} onChange={() => setForm((f) => ({ ...f, type: "task" }))} />
                 Task (assign to someone)
               </label>
-              <label className="flex items-center gap-2 text-sm text-slate-300">
+              <label className="flex items-center gap-2 text-sm text-slate-700">
                 <input type="radio" checked={form.type === "handover"} onChange={() => setForm((f) => ({ ...f, type: "handover" }))} />
                 Handover note
               </label>
@@ -91,14 +91,14 @@ export default function Tasks() {
               placeholder="Title"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="w-full bg-[#0e1420] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
               required
             />
             <textarea
               placeholder="Details / notes"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              className="w-full bg-[#0e1420] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500 min-h-20"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500 min-h-20"
             />
             {form.type === "task" && (
               <div className="grid grid-cols-2 gap-3">
@@ -106,13 +106,13 @@ export default function Tasks() {
                   placeholder="Assign to (name or email)"
                   value={form.assigned_to}
                   onChange={(e) => setForm((f) => ({ ...f, assigned_to: e.target.value }))}
-                  className="bg-[#0e1420] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
                 />
                 <input
                   type="date"
                   value={form.due_date}
                   onChange={(e) => setForm((f) => ({ ...f, due_date: e.target.value }))}
-                  className="bg-[#0e1420] border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500"
                 />
               </div>
             )}
@@ -123,23 +123,23 @@ export default function Tasks() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="p-5">
-          <h3 className="font-semibold text-white mb-4">Tasks</h3>
-          {loading ? <p className="text-slate-500 text-sm">Loading…</p> : tasksList.length === 0 ? (
-            <p className="text-slate-500 text-sm">No tasks yet.</p>
+          <h3 className="font-semibold text-slate-900 mb-4">Tasks</h3>
+          {loading ? <p className="text-slate-600 text-sm">Loading…</p> : tasksList.length === 0 ? (
+            <p className="text-slate-600 text-sm">No tasks yet.</p>
           ) : (
             <div className="space-y-3">
               {tasksList.map((t) => (
                 <div key={t.id} className="flex items-start gap-3">
                   <button onClick={() => cycleStatus(t)} className="mt-0.5 shrink-0">
-                    {t.status === "done" ? <CheckCircle2 size={18} className="text-emerald-400" /> :
-                     t.status === "in_progress" ? <Clock size={18} className="text-amber-400" /> :
-                     <Circle size={18} className="text-slate-500" />}
+                    {t.status === "done" ? <CheckCircle2 size={18} className="text-emerald-700" /> :
+                     t.status === "in_progress" ? <Clock size={18} className="text-amber-700" /> :
+                     <Circle size={18} className="text-slate-600" />}
                   </button>
                   <div className="flex-1">
-                    <div className={`text-sm ${t.status === "done" ? "text-slate-500 line-through" : "text-slate-200"}`}>{t.title}</div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className={`text-sm ${t.status === "done" ? "text-slate-600 line-through" : "text-slate-800"}`}>{t.title}</div>
+                    <div className="text-[11px] text-slate-600">
                       {t.assigned_to && `Assigned to ${t.assigned_to}`}{t.due_date && ` · Due ${t.due_date}`} · {STATUS_LABEL[t.status]}
                     </div>
                   </div>
@@ -150,16 +150,16 @@ export default function Tasks() {
         </Card>
 
         <Card className="p-5">
-          <h3 className="font-semibold text-white mb-4">Handover notes</h3>
-          {loading ? <p className="text-slate-500 text-sm">Loading…</p> : handovers.length === 0 ? (
-            <p className="text-slate-500 text-sm">No handover notes yet.</p>
+          <h3 className="font-semibold text-slate-900 mb-4">Handover notes</h3>
+          {loading ? <p className="text-slate-600 text-sm">Loading…</p> : handovers.length === 0 ? (
+            <p className="text-slate-600 text-sm">No handover notes yet.</p>
           ) : (
             <div className="space-y-3">
               {handovers.map((t) => (
-                <div key={t.id} className="border-b border-white/5 pb-3 last:border-0">
-                  <div className="text-sm text-slate-200">{t.title}</div>
-                  {t.description && <div className="text-[12px] text-slate-500 mt-0.5">{t.description}</div>}
-                  <div className="text-[11px] text-slate-600 mt-1">{new Date(t.created_at).toLocaleString()}</div>
+                <div key={t.id} className="border-b border-slate-200 pb-3 last:border-0">
+                  <div className="text-sm text-slate-800">{t.title}</div>
+                  {t.description && <div className="text-[12px] text-slate-600 mt-0.5">{t.description}</div>}
+                  <div className="text-[11px] text-slate-500 mt-1">{new Date(t.created_at).toLocaleString()}</div>
                 </div>
               ))}
             </div>
