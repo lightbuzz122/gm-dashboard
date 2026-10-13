@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -8,6 +8,7 @@ import Admin from "./pages/Admin";
 import Tasks from "./pages/Tasks";
 import Compliance from "./pages/Compliance";
 import ComingSoon from "./pages/ComingSoon";
+import { DEMO } from "./config";
 
 function ProtectedRoute({ children }) {
   const { session, loading } = useAuth();
@@ -18,7 +19,8 @@ function ProtectedRoute({ children }) {
       </div>
     );
   }
-  if (!session) return <Navigate to="/login" replace />;
+  // DEMO is only true in the local design-preview build, never in the live app.
+  if (!session && !DEMO) return <Navigate to="/login" replace />;
   return children;
 }
 
@@ -37,12 +39,16 @@ function AppRoutes() {
   );
 }
 
+// The standalone design preview is opened as a plain file, so it needs hash
+// routing. The live app always uses normal browser routing.
+const Router = DEMO ? HashRouter : BrowserRouter;
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
-    </BrowserRouter>
+    </Router>
   );
 }
