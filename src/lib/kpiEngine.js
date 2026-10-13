@@ -20,9 +20,9 @@ export function computeStatus(kpi, actual) {
 }
 
 export const STATUS_COLOR = {
-  green: "#22c55e",
-  amber: "#f59e0b",
-  red: "#ef4444",
+  green: "#15803d",
+  amber: "#b45309",
+  red: "#b91c1c",
   unknown: "#64748b",
 };
 
