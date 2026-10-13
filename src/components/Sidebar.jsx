@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home, PoundSterling, Users, GraduationCap, Heart, Layers,
   ShieldCheck, Package, ListChecks, Wrench, FileBarChart, Sparkles,
-  LogOut, ShieldAlert,
+  LogOut, ShieldAlert, Menu, X,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { SITE } from "../config";
 
 export const NAV = [
   { icon: Home, label: "Dashboard", path: "/" },
@@ -22,42 +23,78 @@ export const NAV = [
   { icon: Sparkles, label: "AI Insights", path: "/coming-soon" },
 ];
 
-export default function Sidebar() {
+function Brand() {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-9 h-9 shrink-0 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
+        {SITE.name.replace(/^the\s+/i, "").charAt(0)}
+      </div>
+      <div>
+        <div className="font-semibold text-[14px] leading-tight text-white">{SITE.name}</div>
+        <div className="text-[11px] text-slate-400 tracking-widest uppercase mt-0.5">{SITE.area}</div>
+      </div>
+    </div>
+  );
+}
+
+function NavList({ onNavigate }) {
   const { signOut } = useAuth();
   const location = useLocation();
-
+  const item = (active) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition text-[14px] ${active ? "bg-indigo-600 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"}`;
   return (
-    <aside className="w-56 shrink-0 border-r border-white/5 p-4 flex flex-col gap-1 bg-[#0c111c] h-screen sticky top-0 overflow-y-auto">
-      <div className="flex items-center gap-2 px-2 pb-5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold">A</div>
-        <div>
-          <div className="font-semibold tracking-wide text-sm leading-tight">ALWYNE CASTLE</div>
-          <div className="text-[10px] text-slate-500 tracking-widest">LONDON</div>
-        </div>
-      </div>
-
-      {NAV.map(({ icon: Icon, label, path }) => {
-        const active = location.pathname === path;
-        return (
-          <Link key={label} to={path}
-            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition text-[13px] ${active ? "bg-indigo-600/90 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-200"}`}>
-            <Icon size={16} />
-            <span>{label}</span>
-          </Link>
-        );
-      })}
-
-      <Link to="/admin"
-        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left text-[13px] mt-2 border-t border-white/5 pt-4 ${location.pathname === "/admin" ? "bg-indigo-600/90 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-200"}`}>
-        <ShieldAlert size={16} />
+    <>
+      {NAV.map(({ icon: Icon, label, path }) => (
+        <Link key={label} to={path} onClick={onNavigate} className={item(location.pathname === path)}>
+          <Icon size={17} />
+          <span>{label}</span>
+        </Link>
+      ))}
+      <Link to="/admin" onClick={onNavigate} className={`${item(location.pathname === "/admin")} mt-2`}>
+        <ShieldAlert size={17} />
         <span>Admin</span>
       </Link>
-
-      <div className="mt-auto pt-4 border-t border-white/5">
-        <button onClick={signOut} className="flex items-center gap-3 px-3 py-2 rounded-lg text-left text-slate-400 hover:bg-white/5 hover:text-slate-200 w-full text-[13px]">
-          <LogOut size={16} /> Sign out
+      <div className="mt-auto pt-4 border-t border-white/10">
+        <button onClick={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-white/5 hover:text-white w-full text-[14px]">
+          <LogOut size={17} /> Sign out
         </button>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export default function Sidebar() {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => setOpen(false), [location.pathname]);
+
+  return (
+    <>
+      {/* Desktop / tablet: fixed side navigation */}
+      <aside className="hidden md:flex w-56 shrink-0 p-4 flex-col gap-1 bg-[#0c111c] h-screen sticky top-0 overflow-y-auto">
+        <div className="px-2 pb-5"><Brand /></div>
+        <NavList />
+      </aside>
+
+      {/* Phone: top bar + slide-out menu */}
+      <header className="md:hidden sticky top-0 z-30 flex items-center justify-between bg-[#0c111c] px-4 py-3">
+        <Brand />
+        <button onClick={() => setOpen(true)} aria-label="Open menu" className="p-2 -mr-2 text-white">
+          <Menu size={24} />
+        </button>
+      </header>
+      {open && (
+        <div className="md:hidden fixed inset-0 z-40 flex">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
+          <nav className="relative w-72 max-w-[85%] bg-[#0c111c] p-4 flex flex-col gap-1 h-full overflow-y-auto">
+            <div className="flex items-center justify-between px-2 pb-4">
+              <Brand />
+              <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 text-white"><X size={22} /></button>
+            </div>
+            <NavList onNavigate={() => setOpen(false)} />
+          </nav>
+        </div>
+      )}
+    </>
   );
 }
