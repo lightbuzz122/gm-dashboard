@@ -1,7 +1,7 @@
 // Display settings for the venue shown in the sidebar and dashboard.
-// Change these to the real pub name when you're ready.
+// Change these to the real site name when you're ready.
 export const SITE = {
-  name: "The Crown & Anchor",
+  name: "Current site",
   area: "London",
 };
 
