@@ -14,14 +14,14 @@ export default function Admin() {
   return (
     <Layout>
       <div>
-        <h1 className="text-2xl font-semibold text-white">Admin</h1>
-        <p className="text-slate-500 mt-1">Manage which metrics are tracked, fix mistakes, and see who changed what.</p>
+        <h1 className="text-2xl font-semibold text-slate-900">Admin</h1>
+        <p className="text-slate-600 mt-1">Manage which metrics are tracked, fix mistakes, and see who changed what.</p>
       </div>
 
-      <div className="flex gap-6 border-b border-white/5">
+      <div className="flex gap-6 border-b border-slate-200">
         {TABS.map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`pb-3 text-sm ${tab === t ? "text-white border-b-2 border-indigo-500" : "text-slate-500 hover:text-slate-300"}`}>
+            className={`pb-3 text-sm ${tab === t ? "text-slate-900 border-b-2 border-indigo-500" : "text-slate-600 hover:text-slate-700"}`}>
             {t}
           </button>
         ))}
@@ -63,29 +63,29 @@ function MetricsTab() {
     return acc;
   }, {});
 
-  if (loading) return <Card className="p-10 text-center text-slate-500">Loading…</Card>;
+  if (loading) return <Card className="p-10 text-center text-slate-600">Loading…</Card>;
 
   return (
     <div className="space-y-5">
-      <p className="text-slate-500 text-sm">
+      <p className="text-slate-600 text-sm">
         Only ticked metrics show up on the dashboard and on the weekly data-entry form.
       </p>
       {Object.entries(grouped).map(([category, items]) => (
         <Card key={category} className="p-5">
-          <h3 className="text-sm font-semibold text-white mb-3">{category}</h3>
+          <h3 className="text-sm font-semibold text-slate-900 mb-3">{category}</h3>
           <div className="space-y-2">
             {items.map((k) => (
-              <div key={k.key} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+              <div key={k.key} className="flex items-center justify-between py-1.5 border-b border-slate-200 last:border-0">
                 <div>
-                  <div className="text-sm text-slate-200">{k.name}</div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-sm text-slate-800">{k.name}</div>
+                  <div className="text-[11px] text-slate-600">
                     Target {formatValue(k.target, k.unit)} · {k.direction === "higher_better" ? "higher is better" : "lower is better"}
                   </div>
                 </div>
                 <button
                   onClick={() => toggle(k)}
                   disabled={savingKey === k.key}
-                  className={`w-11 h-6 rounded-full transition relative shrink-0 ${k.active ? "bg-indigo-600" : "bg-white/10"}`}
+                  className={`w-11 h-6 rounded-full transition relative shrink-0 ${k.active ? "bg-indigo-600" : "bg-slate-200"}`}
                 >
                   <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${k.active ? "left-5.5" : "left-0.5"}`}
                     style={{ left: k.active ? "22px" : "2px" }} />
@@ -132,22 +132,22 @@ function EditEntriesTab({ siteId }) {
     }
   }
 
-  if (loading) return <Card className="p-10 text-center text-slate-500">Loading…</Card>;
+  if (loading) return <Card className="p-10 text-center text-slate-600">Loading…</Card>;
 
   return (
     <Card className="p-5">
-      <h3 className="text-sm font-semibold text-white mb-1">Recent entries</h3>
-      <p className="text-[12px] text-slate-500 mb-4">Click a value to correct it — for example, if an extra zero got typed in.</p>
+      <h3 className="text-sm font-semibold text-slate-900 mb-1">Recent entries</h3>
+      <p className="text-[12px] text-slate-600 mb-4">Click a value to correct it — for example, if an extra zero got typed in.</p>
       <div className="space-y-1">
-        {entries.length === 0 && <p className="text-slate-500 text-sm">No entries yet.</p>}
+        {entries.length === 0 && <p className="text-slate-600 text-sm">No entries yet.</p>}
         {entries.map((e) => {
           const kpi = kpiNames[e.kpi_key];
           const isEditing = editing === e.id;
           return (
-            <div key={e.id} className="flex items-center justify-between py-2 border-b border-white/5 text-sm">
+            <div key={e.id} className="flex items-center justify-between py-2 border-b border-slate-200 text-sm">
               <div>
-                <div className="text-slate-200">{kpi?.name || e.kpi_key}</div>
-                <div className="text-[11px] text-slate-500">Week of {e.period_start}</div>
+                <div className="text-slate-800">{kpi?.name || e.kpi_key}</div>
+                <div className="text-[11px] text-slate-600">Week of {e.period_start}</div>
               </div>
               {isEditing ? (
                 <div className="flex items-center gap-2">
@@ -157,15 +157,15 @@ function EditEntriesTab({ siteId }) {
                     step="any"
                     value={draft}
                     onChange={(ev) => setDraft(ev.target.value)}
-                    className="w-28 bg-[#0e1420] border border-indigo-500 rounded-lg px-2 py-1 text-sm outline-none"
+                    className="w-28 bg-white border border-indigo-500 rounded-lg px-2 py-1 text-sm outline-none"
                   />
-                  <button onClick={() => saveEdit(e)} className="text-emerald-400"><Check size={16} /></button>
-                  <button onClick={() => setEditing(null)} className="text-slate-500"><X size={16} /></button>
+                  <button onClick={() => saveEdit(e)} className="text-emerald-700"><Check size={16} /></button>
+                  <button onClick={() => setEditing(null)} className="text-slate-600"><X size={16} /></button>
                 </div>
               ) : (
                 <button
                   onClick={() => { setEditing(e.id); setDraft(String(e.value)); }}
-                  className="text-slate-200 hover:text-indigo-400 font-medium"
+                  className="text-slate-800 hover:text-indigo-700 font-medium"
                 >
                   {formatValue(e.value, kpi?.unit)}
                 </button>
@@ -193,28 +193,28 @@ function ActivityLogTab({ siteId }) {
       });
   }, [siteId]);
 
-  if (loading) return <Card className="p-10 text-center text-slate-500">Loading…</Card>;
+  if (loading) return <Card className="p-10 text-center text-slate-600">Loading…</Card>;
 
   return (
     <Card className="p-5">
       <div className="flex items-center gap-2 mb-4">
-        <History size={16} className="text-slate-400" />
-        <h3 className="text-sm font-semibold text-white">Every change, automatically logged</h3>
+        <History size={16} className="text-slate-600" />
+        <h3 className="text-sm font-semibold text-slate-900">Every change, automatically logged</h3>
       </div>
       {logs.length === 0 ? (
-        <p className="text-slate-500 text-sm">No edits yet — this fills in automatically whenever data is entered or corrected.</p>
+        <p className="text-slate-600 text-sm">No edits yet — this fills in automatically whenever data is entered or corrected.</p>
       ) : (
         <div className="space-y-1">
           {logs.map((l) => (
-            <div key={l.id} className="flex items-center justify-between py-2 border-b border-white/5 text-sm">
+            <div key={l.id} className="flex items-center justify-between py-2 border-b border-slate-200 text-sm">
               <div>
-                <span className="text-slate-200">{l.kpi_key}</span>
-                <span className="text-slate-500"> · week of {l.period_start}</span>
+                <span className="text-slate-800">{l.kpi_key}</span>
+                <span className="text-slate-600"> · week of {l.period_start}</span>
               </div>
-              <div className="text-[12px] text-slate-500">
+              <div className="text-[12px] text-slate-600">
                 {l.old_value != null ? `${l.old_value} → ` : "new: "}
-                <span className="text-white">{l.new_value}</span>
-                <span className="ml-2 text-slate-600">{new Date(l.changed_at).toLocaleString()}</span>
+                <span className="text-slate-900">{l.new_value}</span>
+                <span className="ml-2 text-slate-500">{new Date(l.changed_at).toLocaleString()}</span>
               </div>
             </div>
           ))}
