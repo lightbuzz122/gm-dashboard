@@ -206,7 +206,7 @@ function TargetBar({ kpi, actual }) {
 // Weekly line with the target as a dashed reference line.
 const fmtThousands = (v) => "£" + Math.round(v / 1000) + "k";
 
-function TrendChart({ kpi, points, fmt = fmtThousands, noun = "sales" }) {
+function TrendChart({ kpi, points, fmt = fmtThousands, noun = "sales", height = 230 }) {
   if (!kpi || points.length < 2) {
     return (
       <div className="h-[200px] flex items-center justify-center text-[14px] text-center px-4" style={{ color: MUTED }}>
@@ -214,7 +214,7 @@ function TrendChart({ kpi, points, fmt = fmtThousands, noun = "sales" }) {
       </div>
     );
   }
-  const W = 420, H = 230, L = 58, R = 14, T = 16, B = 34;
+  const W = 420, H = height, L = 58, R = 14, T = 16, B = 34;
   const vals = points.map((p) => p.value);
   const hi = Math.max(...vals, kpi.target || 0);
   const lo = Math.min(...vals, kpi.target ?? Infinity);
@@ -479,7 +479,7 @@ export default function Dashboard() {
               {greeting}{name ? `, ${name}` : ""}
             </h1>
             <p className="text-[15px] mt-0.5" style={{ color: MUTED }}>
-              How {SITE.name} is trading{latestWeek ? ` · latest data: week of ${shortDate(latestWeek)}` : ""}
+              Trading overview{latestWeek ? ` · latest data: week of ${shortDate(latestWeek)}` : ""}
             </p>
           </div>
           <Link to="/entry"
@@ -509,14 +509,14 @@ export default function Dashboard() {
                 const v = latestOf(entriesByKpi, key);
                 const status = computeStatus(kpi, v);
                 return (
-                  <Card key={key} className="p-4">
+                  <Card key={key} className="px-4 pt-3 pb-3">
                     <div className="text-[14px] font-medium" style={{ color: MUTED }}>{label}</div>
-                    <div className="text-[28px] leading-9 font-semibold tabular-nums mt-0.5">{formatValue(v, kpi.unit)}</div>
-                    <div className="text-[13px] mt-0.5 mb-2" style={{ color: MUTED }}>
-                      Target {formatValue(kpi.target, kpi.unit)}
-                    </div>
+                    <div className="text-[36px] leading-[44px] font-bold tabular-nums tracking-tight">{formatValue(v, kpi.unit)}</div>
                     <Sparkline values={seriesOf(entriesByKpi, key).map((e) => e.value)} color={STATUS_UI[status].bar} />
-                    <div className="mt-2"><StatusChip status={status} /></div>
+                    <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mt-1.5">
+                      <StatusChip status={status} />
+                      <span className="text-[13px]" style={{ color: MUTED }}>Target {formatValue(kpi.target, kpi.unit)}</span>
+                    </div>
                   </Card>
                 );
               })}
@@ -534,7 +534,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <div className="text-[14px] font-medium mb-2">Total sales, last 8 weeks</div>
-                    <TrendChart kpi={total} points={seriesOf(entriesByKpi, "total_sales")} />
+                    <TrendChart kpi={total} points={seriesOf(entriesByKpi, "total_sales")} height={340} />
                   </div>
                 </div>
               </Card>
@@ -565,7 +565,7 @@ export default function Dashboard() {
             </div>
 
             {/* Labour, guests, safety */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
               <Card className="p-5">
                 <CardTitle hint="This week">Labour</CardTitle>
                 <div className="space-y-6">
@@ -574,7 +574,7 @@ export default function Dashboard() {
                     <div>
                       <div className="text-[14px] font-medium mb-1">Labour %, last 8 weeks</div>
                       <TrendChart kpi={labour} points={seriesOf(entriesByKpi, "labour_pct")} noun="labour"
-                        fmt={(v) => v.toFixed(1) + "%"} />
+                        fmt={(v) => v.toFixed(1) + "%"} height={190} />
                     </div>
                   )}
                   {defByKey.labour_overtime_hours?.active && latestOf(entriesByKpi, "labour_overtime_hours") != null && (
@@ -587,12 +587,19 @@ export default function Dashboard() {
                 <CardTitle hint="This week">Guests</CardTitle>
                 <div className="space-y-6">
                   {complaints && complaints.active && <PipMeter kpi={complaints} actual={latestOf(entriesByKpi, "complaints")} />}
+                  {complaints && complaints.active && (
+                    <div>
+                      <div className="text-[14px] font-medium mb-1">Complaints, last 8 weeks</div>
+                      <TrendChart kpi={complaints} points={seriesOf(entriesByKpi, "complaints")} noun="complaints"
+                        fmt={(v) => String(Math.round(v))} height={170} />
+                    </div>
+                  )}
                   {review && review.active && <MeterRow kpi={review} actual={latestOf(entriesByKpi, "review_score")} />}
                   {nps && nps.active && <MeterRow kpi={nps} actual={latestOf(entriesByKpi, "nps")} />}
                 </div>
               </Card>
 
-              <Card className="p-5 lg:col-span-2 xl:col-span-1">
+              <Card className="p-5">
                 <CardTitle hint="Today">
                   <span className="inline-flex items-center gap-2"><ShieldCheck size={18} style={{ color: ACCENT }} /> Safety checks</span>
                 </CardTitle>
