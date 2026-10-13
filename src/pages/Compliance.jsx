@@ -5,17 +5,8 @@ import { supabase } from "../lib/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { useSiteId } from "./Dashboard";
 
-const PERIODS = ["morning", "daytime", "evening"];
-const PERIOD_LABEL = { morning: "Morning", daytime: "Daytime", evening: "Evening" };
-
-// Standard starter checklist — edit this list as your real process gets defined.
-const ITEMS = [
-  "Fridge 1 Temperature",
-  "Fridge 2 Temperature",
-  "Freezer Temperature",
-  "Hot Hold Food Temperature",
-  "Allergen Check",
-];
+import { CHECK_ITEMS as ITEMS, CHECK_PERIODS as PERIODS, CHECK_PERIOD_LABEL as PERIOD_LABEL } from "../config";
+// The check list lives in src/config.js so the dashboard and this form always match.
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -62,18 +53,18 @@ export default function Compliance() {
   return (
     <Layout>
       <div>
-        <h1 className="text-2xl font-semibold text-white">Compliance & Safety</h1>
-        <p className="text-slate-500 mt-1">Daily fridge, food temperature, and allergen checks — morning, daytime, and evening.</p>
+        <h1 className="text-2xl font-semibold text-slate-900">Compliance & Safety</h1>
+        <p className="text-slate-600 mt-1">Daily fridge, food temperature, and allergen checks — morning, daytime, and evening.</p>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {PERIODS.map((p) => {
           const doneCount = ITEMS.filter((item) => completedToday[`${p}|${item}`]).length;
           const done = doneCount === ITEMS.length;
           return (
             <button key={p} onClick={() => setPeriod(p)}
-              className={`px-4 py-2 rounded-lg text-sm flex items-center gap-2 ${period === p ? "bg-indigo-600 text-white" : "bg-[#121826] text-slate-400 border border-white/10"}`}>
-              {done && <CheckCircle2 size={14} className="text-emerald-400" />}
+              className={`px-4 py-2 rounded-lg text-sm flex items-center gap-2 ${period === p ? "bg-indigo-600 text-white" : "bg-white text-slate-600 border border-slate-300"}`}>
+              {done && <CheckCircle2 size={14} className="text-emerald-700" />}
               {PERIOD_LABEL[p]} ({doneCount}/{ITEMS.length})
             </button>
           );
@@ -85,10 +76,10 @@ export default function Compliance() {
           {ITEMS.map((item) => {
             const already = completedToday[`${period}|${item}`];
             return (
-              <div key={item} className="flex items-center gap-4 border-b border-white/5 pb-3 last:border-0">
+              <div key={item} className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-200 pb-3 last:border-0">
                 <div className="flex-1">
-                  <div className="text-sm text-slate-200">{item}</div>
-                  {already && <div className="text-[11px] text-emerald-400">Recorded: {already.value || already.status}</div>}
+                  <div className="text-sm text-slate-800">{item}</div>
+                  {already && <div className="text-[11px] text-emerald-700">Recorded: {already.value || already.status}</div>}
                 </div>
                 {!already && (
                   <>
@@ -96,12 +87,12 @@ export default function Compliance() {
                       placeholder="Reading / note"
                       value={values[item] || ""}
                       onChange={(e) => setValues((v) => ({ ...v, [item]: e.target.value }))}
-                      className="w-40 bg-[#0e1420] border border-white/10 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500"
+                      className="w-full sm:w-40 bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500"
                     />
                     <select
                       value={values[`${item}_status`] || "pass"}
                       onChange={(e) => setValues((v) => ({ ...v, [`${item}_status`]: e.target.value }))}
-                      className="bg-[#0e1420] border border-white/10 rounded-lg px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
+                      className="bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-sm outline-none focus:border-indigo-500"
                     >
                       <option value="pass">Pass</option>
                       <option value="fail">Fail</option>
@@ -118,7 +109,7 @@ export default function Compliance() {
         </form>
       </Card>
 
-      <p className="text-[11px] text-slate-600">
+      <p className="text-[11px] text-slate-500">
         This checklist is a starting template. Once your real process is confirmed, the item list and required fields can be tailored exactly to how the kitchen actually works.
       </p>
     </Layout>
